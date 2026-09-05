@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: catalogue
+ namespace: roboshop
+data:
+ MONGO: "true"
+ MONGO_URL: "{{ .Values.mongo.url }}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue
+  namespace: roboshop
+  # these are replica set labels
+  labels:
+    component: catalogue
+    project: roboshop
+spec:
+  replicas: 1
+  selector:
+    # these labels are used to select pods
+    matchLabels:
+      component: catalogue
+      project: roboshop
+  # pod definition
+  template:
+    metadata:
+      labels:
+        component: catalogue
+        project: roboshop
+    spec:
+      containers:
+      - name: catalogue
+        image: "{{ .Values.owner.component }}:{{ .Values.owner.version }}"
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: catalogue
+        ports:
+        - name: liveness-port
+          containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 1
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 1
+          periodSeconds: 15
+---
+#service
+apiVersion: v1
+kind: Service
+metadata:
+ name: catalogue
+ namespace: roboshop
+spec:
+  selector:
+   component: catalogue
+   project: roboshop
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+ 

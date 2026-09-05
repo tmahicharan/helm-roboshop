@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: {{ .Values.owner.component }} : {{ .Values.owner.version }}
+        image: "{{ .Values.owner.component }}:{{ .Values.owner.version }}"
         readinessProbe:
           tcpSocket:
             port: 27017

@@ -1,0 +1,5 @@
+owner:
+  imageRepo: 677673473487.dkr.ecr.us-east-1.amazonaws.com/roboshop/user
+  imageversion: IMAGE_VERSION
+  REDIS_URL: "redis://redis:6379"
+  MONGO_URL: "mongodb://mongodb:27017/users"
